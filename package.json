@@ -1,0 +1,19 @@
+{
+  "name": "devtinderbackend",
+  "version": "1.0.0",
+  "description": "Tinder for dev Engineer",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "nodeJs",
+    "React"
+  ],
+  "author": "Ritik Jain",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
