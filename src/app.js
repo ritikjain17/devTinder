@@ -1,7 +1,23 @@
 const express = require("express");
+const {adminAuth , userAuth} = require("./middleware/auth")
+
 
 const app = express();
 
+app.use("/admin" , adminAuth)
+
+app.get("/admin/getAllData",  (req, res) => {
+    res.send("All data is provided succesfully!");
+})
+
+app.delete("/admin/deleteData" , (req, res) => {
+    res.send("data deleted successfully");
+})
+
+
+app.get("/user/getAllData" , userAuth,  (req, res) => {
+    res.send("All data is provided succesfully!");
+})
 
 // GET /user => middleware => response middleware;
 app.use("/" , (req, res , next) => {
