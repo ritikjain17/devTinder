@@ -4,6 +4,34 @@ const app = express();
 
 
 
+// there can be a multiple route handlers -
+
+// we can make an array of mutiple route handles 
+// app.use('/Dataget', [rh1, rh2 , rh3, rh4] , rh5, rh6)
+app.get("/getData" , (req, res, next) => {
+    console.log("route handles 1 !")
+    // res.send("route 1")
+    next()
+}, 
+[
+(req, res , next) => {
+    console.log("route handler 2 !");
+    // res.send("route 2")
+    next()
+}, 
+(req, res, next) => {
+    console.log("route handler 3 !");
+    // res.send("route 2")
+    next()
+}],
+(req, res, next) => {
+    console.log("route handler 4 !");
+    res.send("route 4")
+})
+
+
+
+
 // this is the regex where B is option and there so many regex type thing in express 4 version
 app.get("/ab?c" , (req, res) => {
     res.send('E is optional')
