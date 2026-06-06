@@ -9,6 +9,16 @@ app.get("/ab?c" , (req, res) => {
     res.send('E is optional')
 })
 
+app.get('/user/:userId/:userName/:userMobile' , (request,res) => {
+    console.log(request.params);
+    res.send('getting the data of the user')
+})
+
+app.get("/user" , (req,res) => {
+    console.log(req.query)
+    res.send("getting query items")
+})
+
 
 // this will only handle the get call of /hello
 app.get('/hello' , (req, res) => {
