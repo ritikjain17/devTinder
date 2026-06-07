@@ -5,14 +5,36 @@ const User = require("./models/user");
 
 const app = express();
 
+app.use(express.json());
+
+
+app.get("/getUser" , async (req, res) => {
+    // const users = new User(req.body);
+    try{
+        // console.log("users" , users)
+        const users = await User.findOne({email:"vishal@gmail.com"})
+        res.send(users)
+    }catch(error){
+        console.log(error);
+        res.status(400).send("something Went Wrong")
+    }
+})
+
+// Get All the documents from the user using find method
+app.get("/feed" , async (req, res) => {
+    // const users = new User(req.body);
+    try{
+        // console.log("users" , users)
+        const users = await User.find({})
+        res.send(users)
+    }catch(error){
+        console.log(error);
+        res.status(400).send("something Went Wrong")
+    }
+})
+
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "Rahul",
-    lastName: "Jain",
-    email: "Rahul@gmail.com",
-    password: "rahul1345#",
-    age: 29,
-  });
+  const user = new User(req.body);
 
   try {
     await user.save();
