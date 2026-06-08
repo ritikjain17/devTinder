@@ -65,7 +65,8 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("Data inserted Successfully");
   } catch (error) {
-    res.status(400).send("Something Went Wrong!");
+    console.log("error ----" , error)
+    res.status(400).send("Something Went Wrong!" + error);
   }
 });
 
