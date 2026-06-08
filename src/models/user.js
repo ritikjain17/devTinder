@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,10 +15,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique:true
+      unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Enter Valid Email id --");
+        }
+      },
     },
     password: {
       type: String,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Enter strong Password --");
+        }
+      },
     },
     age: {
       type: Number,
@@ -28,10 +39,13 @@ const userSchema = new mongoose.Schema(
       type: [String],
     },
     mobile: {
-      type: Number,
-      minLength: 10,
-      maxLength: 10,
-      unique:true
+      type: String,
+      unique: true,
+      validate(value) {
+        if (!validator.isMobilePhone(value, "en-IN")) {
+          throw new Error("Invalid mobile number");
+        }
+      },
     },
     gender: {
       type: String,

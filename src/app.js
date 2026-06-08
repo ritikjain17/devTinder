@@ -19,18 +19,36 @@ app.get("/getUser", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
+  console.log("userid ---", userId);
   const data = req.body;
 
   try {
     console.log(data);
-    const users = await User.findByIdAndUpdate(userId, data);
+    const UPDATE_ALLOWED = ["firstName", "age", "password", "skills"];
+
+    const isUpdateAllowed = Object.keys(data).every((k) => {
+      return UPDATE_ALLOWED.includes(k);
+    });
+    console.log(isUpdateAllowed)
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+      res.status(400).send("UPdate is not alloed");
+    }
+
+    if (data?.skills.length > 10) {
+      throw new Error("Skills should be less or equals to 10");
+    }
+    const users = await User.findByIdAndUpdate(userId, data, {
+      runValidators: true,
+      returnDocument: "after",
+    });
     console.log("user ---", users);
     res.send("Data updated successfully!");
   } catch (error) {
     console.log(error);
-    res.status(400).send("something Went Wrong");
+    res.status(400).send("something Went Wrong" + error);
   }
 });
 
@@ -65,7 +83,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("Data inserted Successfully");
   } catch (error) {
-    console.log("error ----" , error)
+    console.log("error ----", error);
     res.status(400).send("Something Went Wrong!" + error);
   }
 });
