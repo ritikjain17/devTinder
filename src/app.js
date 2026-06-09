@@ -2,6 +2,8 @@ const express = require("express");
 const { adminAuth, userAuth } = require("./middleware/auth");
 const connectDb = require("./config/database");
 const User = require("./models/user");
+const { validationSignData } = require("./utils/validation");
+const brcypt = require("bcrypt");
 
 const app = express();
 
@@ -31,7 +33,7 @@ app.patch("/user/:userId", async (req, res) => {
     const isUpdateAllowed = Object.keys(data).every((k) => {
       return UPDATE_ALLOWED.includes(k);
     });
-    console.log(isUpdateAllowed)
+    console.log(isUpdateAllowed);
     if (!isUpdateAllowed) {
       throw new Error("Update not allowed");
       res.status(400).send("UPdate is not alloed");
@@ -77,14 +79,46 @@ app.get("/feed", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
-
   try {
+    const { firstName, lastName, email, password } = req.body;
+    validationSignData(req);
+
+    const protectedPassword = await brcypt.hash(password, 5);
+
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: protectedPassword,
+    });
+
     await user.save();
     res.send("Data inserted Successfully");
   } catch (error) {
     console.log("error ----", error);
     res.status(400).send("Something Went Wrong!" + error);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const users = await User.findOne({ email: email });
+
+    if (!users) {
+      throw new Error("Invalid Credentials");
+    }
+
+    const isPasswordValid = await brcypt.compare(password, users.password);
+
+    if (!isPasswordValid) {
+      throw new Error("Invalid Credentials");
+    } else {
+      res.send("Login Successfully!!");
+    }
+  } catch (error) {
+    res.status(400).send("Something Went Wrong" + error);
   }
 });
 
